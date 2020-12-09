@@ -1,0 +1,54 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   
+
+    <script type="text/javascript">
+        function handleImage(){  
+                $('#result').text("Output: Predicting...");    
+                var canvas = document.querySelector("#canvas");                  
+                var imgURL = canvas.toDataURL();   
+                var imgURL = imgURL.replace(/^data:image\/[a-z]+;base64,/, "");
+                //Send Ajax call
+                $.ajax({
+                    type: 'POST',
+                    url: '/',
+                    data: {
+                        imageBase64 : imgURL
+                    }, 
+                    success: function(data){
+	   					$('#result').text('Output: ' + data);
+	   				}           
+                });                     
+            }
+</script>
+
+</head>
+
+<body>
+    <h1 style="margin-top: 1%; text-align: center;font-size:200%;font-weight: bolder;">Stonks. Predict it!</h1>
+    Please upload:
+<form action="/api" method="POST" enctype="multipart/form-data">
+  <input type="file" id="myFile" name="stock" accept=".csv" >
+  <input type="submit"  value="Upload">
+</form>
+   Next day expected close price: {{result}}
+</body>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+</script>
+
+</html>

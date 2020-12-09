@@ -1,0 +1,6 @@
+Flask
+pandas
+numpy
+tensorflow-cpu
+tqdm
+gunicorn
