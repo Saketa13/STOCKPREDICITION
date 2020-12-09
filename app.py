@@ -1,4 +1,3 @@
-
 from tensorflow import keras
 import pandas as pd
 from flask import Flask, render_template, request,url_for,redirect
@@ -51,13 +50,13 @@ def dropit(stock):
 
 def sma(stock):
   
-  stock = stock.assign(SMA=pd.Series([i for i in range(0,4037)]).values)
+  stock = stock.assign(SMA=pd.Series([1 for i in range(0,stock.shape[0])]).values)
   stock["SMA"]=stock["Close Price"].rolling(window=10).mean()
   
   return stock
 
 def ema(stock):
-  stock.assign(EMA=pd.Series([1 for i in range(0,4037)]).values)
+  stock.assign(EMA=pd.Series([1 for i in range(0,stock.shape[0])]).values)
   a=stock["Close Price"].ewm(adjust=False,alpha=0.5)
   stock["EMA"]=a.mean()
   return stock
