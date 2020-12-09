@@ -1,6 +1,6 @@
 Flask
 pandas
 numpy
-tensorflow-cpu
+tensorflow
 tqdm
 gunicorn

@@ -133,7 +133,7 @@ def model_train(df):
     model.fit(x=X,y=Y,batch_size=32,epochs=10)
     print("end training")
 
-    test=df[4016:4026].to_numpy()
+    test=df[-10:].to_numpy()
     #print(f"real: {df.iloc[4026][3]*max+min}")
     print(f"Predicted: {model.predict(test.reshape(1,10,cols))*max+min}")
     return model.predict(test.reshape(1,10,cols))*max+min
