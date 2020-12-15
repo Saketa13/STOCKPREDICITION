@@ -22,20 +22,27 @@ def index():
 @app.route("/api",methods=["POST"])
 def api():
 
-    uploaded_file =request.files['stock']
-    '''if uploaded_file.filename != '':
-           file_path = os.path.join(app.config['UPLOAD_FOLDER'], uploaded_file.filename)
+    stock_main =request.files['stock_main']
+    stock_1 =request.files['stock_1']
+    stock_2 =request.files['stock_2']
+    stock_3 =request.files['stock_3']
 
-           uploaded_file.save(file_path)'''
+
+    stock_main = pd.read_csv(stock_main)
+    stock_1 = pd.read_csv(stock_1)
+    stock_2 = pd.read_csv(stock_2)
+    stock_3 = pd.read_csv(stock_3)
 
 
-    df = pd.read_csv(uploaded_file)
-    result=model_train(df)
+    result=model_train(stock_main,stock_1,stock_2,stock_3)
+
 
 
 
     #os.remove(file_path)
-    return render_template("index.html",result=result)
+    print(type(result))
+    print(result.shape)
+    return render_template("index.html",result=result[0,0])
 
 
 
@@ -45,7 +52,7 @@ def api():
 def dropit(stock):
   stock=stock.drop(['Date','WAP','No.of Shares' , 'No. of Trades',	'Total Turnover (Rs.)',	'Deliverable Quantity',	'% Deli. Qty to Traded Qty',	'Spread High-Low',	'Spread Close-Open'],axis=1)
   stock =stock.iloc[::-1].reset_index()
-  stock=stock.drop(['index'],axis=1)
+  #stock=stock.drop(['index'],axis=1)
   return stock
 
 def sma(stock):
@@ -91,15 +98,37 @@ def batch(stocks,cols,size):
     return X,Y
 
 
-def model_train(df):
+def model_train(stock,stock1,stock2,stock3):
    
-    df=dropit(df)
-    df=sma(df)
-    df=ema(df)
+    stock=dropit(stock)
+    stock=sma(stock)
+    stock=ema(stock)
+
+    stock1=dropit(stock1)
+    stock1=sma(stock1)
+    stock1=ema(stock1)    
+
+    stock2=dropit(stock2)
+    stock2=sma(stock2)
+    stock2=ema(stock2)
+
+    stock3=dropit(stock3)
+    stock3=sma(stock3)
+    stock3=ema(stock3)
     
-    print(df.min)
-    min=df.min().to_numpy()[3]
-    max=df.max().to_numpy()[3]
+    min=stock.min().to_numpy()[3]
+    max=stock.max().to_numpy()[3]
+
+    stock1=stock1.rename(columns={'Open Price':'Open_TCS'	,'High Price':'High_TCS',	'Low Price':'Low_TCS'	,'Close Price':'Close_TCS','SMA':'SMA-TCS','EMA':'EMA-TCS'})
+    stock2=stock2.rename(columns={'Open Price':'Open_stock2'	,'High Price':'High_stock2',	'Low Price':'Low_stock2'	,'Close Price':'Close_stock2','SMA':'SMA-stock2','EMA':'EMA-stock2'})
+    stock3=stock3.rename(columns={'Open Price':'Open_stock3'	,'High Price':'High_stock3',	'Low Price':'Low_stock3'	,'Close Price':'Close_stock3','SMA':'SMA-stock3','EMA':'EMA-stock3'})
+    print(f'{stock.shape} {stock1.shape} {stock2.shape}')
+    df=pd.merge(stock,stock1)
+    df=pd.merge(df,stock2)
+    df=pd.merge(df,stock3)
+    print(df.shape)
+    df=df.drop(['index'],axis=1)
+    print(df.shape)
 
     df=norm(df)
     df=df.iloc[10:]
